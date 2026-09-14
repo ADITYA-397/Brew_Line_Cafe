@@ -3,7 +3,7 @@ import React, { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { doc, onSnapshot, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
-import Navbar from "../../../components/Navbar";
+import Link from "next/link";
 import { Clock, Check, RefreshCw, Star, Heart } from "lucide-react";
 
 export default function TrackOrderPage({ params }) {
@@ -238,7 +238,38 @@ export default function TrackOrderPage({ params }) {
           flexDirection: "column",
         }}
       >
-        <Navbar />
+        <header
+          style={{
+            borderBottom: "1px solid #D8CEBF",
+            backgroundColor: "#EDE7DC",
+            padding: "18px clamp(16px, 4vw, 24px)",
+            boxSizing: "border-box",
+          }}
+        >
+          <div
+            style={{
+              maxWidth: "700px",
+              margin: "0 auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Link
+              href="/"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "1.45rem",
+                fontWeight: 700,
+                color: "#2E2620",
+                textDecoration: "none",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Brewline.
+            </Link>
+          </div>
+        </header>
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <div className="w-10 h-10 border-3 border-[#C08552] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-medium text-[#8A7D6E] font-serif">
@@ -259,15 +290,84 @@ export default function TrackOrderPage({ params }) {
           "var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif)",
       }}
     >
-      {/* Site Header */}
-      <Navbar />
+      {/* Top Header Bar */}
+      <header
+        style={{
+          borderBottom: "1px solid #D8CEBF",
+          backgroundColor: "#EDE7DC",
+          padding: "18px clamp(16px, 4vw, 24px)",
+          boxSizing: "border-box",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "700px",
+            margin: "0 auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Link
+            href="/"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "1.45rem",
+              fontWeight: 700,
+              color: "#2E2620",
+              textDecoration: "none",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Brewline.
+          </Link>
+          <Link
+            href="/"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              color: "#8A7D6E",
+              textDecoration: "none",
+              fontSize: "13.5px",
+              fontWeight: 600,
+              padding: "6px 12px",
+              borderRadius: "8px",
+              transition: "color 0.2s, background-color 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#2E2620";
+              e.currentTarget.style.backgroundColor = "rgba(46, 38, 32, 0.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "#8A7D6E";
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            <span>Home</span>
+          </Link>
+        </div>
+      </header>
 
       {/* Main Container */}
       <main
         style={{
           maxWidth: "700px",
           margin: "0 auto",
-          padding: "100px clamp(16px, 4vw, 24px) 80px",
+          padding: "40px clamp(16px, 4vw, 24px) 80px",
           boxSizing: "border-box",
         }}
       >

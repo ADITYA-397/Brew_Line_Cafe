@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { calculateOrderTotals, DEFAULT_DELIVERY_FEE } from "../lib/pricing";
 
 function TrashIcon() {
@@ -32,6 +33,7 @@ function CoffeeCup() {
 export default function CartDrawer() {
   const router = useRouter();
   const { cartItems, isCartOpen, setIsCartOpen, clearCart, updateQuantity } = useCart();
+  const { user } = useAuth();
 
   React.useEffect(() => {
     if (isCartOpen) document.body.style.overflow = "hidden";
@@ -43,6 +45,10 @@ export default function CartDrawer() {
 
   const handleCheckoutClick = () => {
     setIsCartOpen(false);
+    if (!user) {
+      router.push("/login?redirect=/checkout");
+      return;
+    }
     router.push("/checkout");
   };
 
@@ -369,27 +375,91 @@ export default function CartDrawer() {
                   }}
                 >
                   <CoffeeCup />
-                  <p style={{ fontWeight: 700, fontSize: "1.35rem", color: "#2E2620", margin: "0 0 8px" }}>Your cart is empty</p>
-                  <p style={{ fontSize: "14.5px", color: "#8A7D6E", margin: "0 0 24px" }}>Looks like you haven&apos;t added anything yet</p>
-                  <button
-                    onClick={() => setIsCartOpen(false)}
-                    style={{
-                      backgroundColor: "#C08552",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "9999px",
-                      padding: "12px 36px",
-                      fontSize: "14.5px",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      boxShadow: "0 2px 8px rgba(192, 133, 82, 0.25)",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = "#A96F3F"}
-                    onMouseLeave={e => e.currentTarget.style.backgroundColor = "#C08552"}
-                  >
-                    Browse Menu
-                  </button>
+                  {!user ? (
+                    <>
+                      <p style={{ fontWeight: 700, fontSize: "1.35rem", color: "#2E2620", margin: "0 0 8px" }}>
+                        Sign In to Add Items
+                      </p>
+                      <p style={{ fontSize: "14.5px", color: "#8A7D6E", margin: "0 0 24px" }}>
+                        You must be signed in to add items to your cart and place an order.
+                      </p>
+                      <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+                        <button
+                          onClick={() => {
+                            setIsCartOpen(false);
+                            router.push("/login");
+                          }}
+                          style={{
+                            backgroundColor: "#C08552",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "9999px",
+                            padding: "12px 28px",
+                            fontSize: "14px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            boxShadow: "0 2px 8px rgba(192, 133, 82, 0.25)",
+                            transition: "background-color 0.2s",
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.backgroundColor = "#A96F3F"}
+                          onMouseLeave={e => e.currentTarget.style.backgroundColor = "#C08552"}
+                        >
+                          Log In
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsCartOpen(false);
+                            router.push("/signup");
+                          }}
+                          style={{
+                            backgroundColor: "#FFFFFF",
+                            color: "#2E2620",
+                            border: "1.5px solid #D5CBBF",
+                            borderRadius: "9999px",
+                            padding: "12px 28px",
+                            fontSize: "14px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            transition: "all 0.2s",
+                          }}
+                          onMouseEnter={e => {
+                            e.currentTarget.style.backgroundColor = "#F5EEE5";
+                            e.currentTarget.style.borderColor = "#C08552";
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.style.backgroundColor = "#FFFFFF";
+                            e.currentTarget.style.borderColor = "#D5CBBF";
+                          }}
+                        >
+                          Sign Up
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p style={{ fontWeight: 700, fontSize: "1.35rem", color: "#2E2620", margin: "0 0 8px" }}>Your cart is empty</p>
+                      <p style={{ fontSize: "14.5px", color: "#8A7D6E", margin: "0 0 24px" }}>Looks like you haven&apos;t added anything yet</p>
+                      <button
+                        onClick={() => setIsCartOpen(false)}
+                        style={{
+                          backgroundColor: "#C08552",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "9999px",
+                          padding: "12px 36px",
+                          fontSize: "14.5px",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          boxShadow: "0 2px 8px rgba(192, 133, 82, 0.25)",
+                          transition: "background-color 0.2s",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = "#A96F3F"}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = "#C08552"}
+                      >
+                        Browse Menu
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>

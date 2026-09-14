@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState, useMemo } from 'react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Plus, ArrowRight } from 'lucide-react';
+import { Plus, Minus, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Premium photo mapping for specific items
 
@@ -19,24 +21,96 @@ const ScallopedDivider = ({ position = "top", color = "#EAE3D9" }) => {
   );
 };
 
-const VintageMenuItem = ({ item, addToCart }) => {
+const VintageMenuItem = ({ item, addToCart: propAddToCart }) => {
+  const { cartItems, addToCart: ctxAddToCart, updateQuantity, setIsAuthModalOpen } = useCart();
+  const { user } = useAuth();
+  const addToCart = propAddToCart || ctxAddToCart;
+
+  const cartItem = cartItems.find(
+    ci => (item.id && ci.id === item.id) || (item.name && ci.name === item.name)
+  );
+  const quantity = user && cartItem ? cartItem.qty : 0;
+  const itemIdentifier = item.id || item.name;
+
   return (
     <div className="menu-item-anim group border-b border-[#3B2E28]/10 last:border-0 transition-all duration-500 hover:bg-[#3B2E28]/[0.02] -mx-4 rounded-xl" style={{ padding: "32px 16px" }}>
       <div className="menu-item-row relative">
         <h4 className="menu-item-name font-heading">{item.name}</h4>
         <div className="menu-item-dots" />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
           <span className="menu-item-price">₹ {Number(item.price).toFixed(2)}</span>
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              addToCart(item);
-            }}
-            className="w-8 h-8 rounded-full border border-[#8C6A53]/30 text-[#8C6A53] flex items-center justify-center hover:bg-[#3B2E28] hover:text-white hover:border-[#3B2E28] transition-all transform active:scale-90 shadow-sm"
-            title="Add to cart"
-          >
-            <Plus size={16} />
-          </button>
+          <div className="relative flex items-center justify-center min-w-[32px] h-8">
+            <AnimatePresence mode="wait" initial={false}>
+              {quantity === 0 ? (
+                <motion.button 
+                  key="add-btn"
+                  type="button"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.16, ease: "easeOut" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!user) {
+                      setIsAuthModalOpen(true);
+                      return;
+                    }
+                    addToCart(item);
+                  }}
+                  className="w-8 h-8 rounded-full border border-[#8C6A53]/30 text-[#8C6A53] flex items-center justify-center hover:bg-[#3B2E28] hover:text-white hover:border-[#3B2E28] transition-colors active:scale-90 shadow-sm shrink-0 cursor-pointer"
+                  title={`Add ${item.name} to cart`}
+                  aria-label={`Add ${item.name} to cart`}
+                >
+                  <Plus size={16} />
+                </motion.button>
+              ) : (
+                <motion.div 
+                  key="qty-control"
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  transition={{ duration: 0.16, ease: "easeOut" }}
+                  className="h-8 px-1.5 rounded-full border border-[#8C6A53]/40 bg-[#F4EFEA] flex items-center gap-1 shadow-sm shrink-0"
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!user) {
+                        setIsAuthModalOpen(true);
+                        return;
+                      }
+                      updateQuantity(itemIdentifier, -1);
+                    }}
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[#3B2E28] hover:bg-[#3B2E28]/10 active:scale-90 transition-all cursor-pointer"
+                    title={`Decrease ${item.name} quantity`}
+                    aria-label={`Decrease ${item.name} quantity`}
+                  >
+                    <Minus size={13} strokeWidth={2.4} />
+                  </button>
+                  <span className="min-w-[18px] text-center font-heading font-bold text-xs sm:text-sm text-[#3B2E28] select-none">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!user) {
+                        setIsAuthModalOpen(true);
+                        return;
+                      }
+                      updateQuantity(itemIdentifier, 1);
+                    }}
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-[#3B2E28] hover:bg-[#3B2E28]/10 active:scale-90 transition-all cursor-pointer"
+                    title={`Increase ${item.name} quantity`}
+                    aria-label={`Increase ${item.name} quantity`}
+                  >
+                    <Plus size={13} strokeWidth={2.4} />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
       <p className="menu-item-description" style={{ marginTop: "16px" }}>
