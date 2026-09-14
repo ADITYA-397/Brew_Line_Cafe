@@ -3,9 +3,52 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase';
 import InvoiceModal from './InvoiceModal';
-import { FileText } from 'lucide-react';
+import { FileText, Camera, Trash2, Loader2 } from 'lucide-react';
+
+function compressImage(file, maxWidth = 320, maxHeight = 320, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        canvas.toBlob(
+          (blob) => {
+            resolve({ blob: blob || null, dataUrl });
+          },
+          'image/jpeg',
+          quality
+        );
+      };
+      img.onerror = (err) => reject(err);
+      img.src = readerEvent.target.result;
+    };
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function ProfileDrawer() {
   const { profile, logout, updateProfile, user } = useAuth();
@@ -15,6 +58,8 @@ export default function ProfileDrawer() {
   const [formData, setFormData] = useState({ name: '', dob: '', phone: '', newsletter: true, gender: '', addresses: [], photo: '' });
   const [orders, setOrders] = useState([]);
   const [statusMsg, setStatusMsg] = useState('');
+  const [photoStatus, setPhotoStatus] = useState('');
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [newAddress, setNewAddress] = useState('');
   const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState(null);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
@@ -70,9 +115,70 @@ export default function ProfileDrawer() {
     setFormData({ ...formData, [e.target.name]: value });
   };
 
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) setFormData({ ...formData, photo: URL.createObjectURL(file) });
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset input so re-selecting same file triggers change
+    e.target.value = '';
+
+    if (!file.type.startsWith('image/')) {
+      setPhotoStatus('Please select a valid image file');
+      setTimeout(() => setPhotoStatus(''), 3000);
+      return;
+    }
+
+    if (!user) {
+      setPhotoStatus('Please log in first');
+      setTimeout(() => setPhotoStatus(''), 3000);
+      return;
+    }
+
+    setIsUploadingPhoto(true);
+    setPhotoStatus('Uploading photo...');
+
+    try {
+      const { blob, dataUrl } = await compressImage(file, 300, 300, 0.85);
+      let permanentUrl = dataUrl;
+
+      // Try uploading to Firebase Storage
+      if (storage && blob) {
+        try {
+          const storageRef = ref(storage, `profiles/${user.uid}/avatar_${Date.now()}.jpg`);
+          await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
+          permanentUrl = await getDownloadURL(storageRef);
+        } catch (storageErr) {
+          console.warn("Firebase Storage upload skipped/failed, using optimized base64 fallback:", storageErr);
+          permanentUrl = dataUrl;
+        }
+      }
+
+      setFormData(prev => ({ ...prev, photo: permanentUrl }));
+      await updateProfile({ photo: permanentUrl });
+      setPhotoStatus('Photo updated!');
+      setTimeout(() => setPhotoStatus(''), 3000);
+    } catch (err) {
+      console.error("Photo upload error:", err);
+      setPhotoStatus('Upload failed. Try another image.');
+      setTimeout(() => setPhotoStatus(''), 3000);
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    if (!user || isUploadingPhoto) return;
+    setIsUploadingPhoto(true);
+    try {
+      setFormData(prev => ({ ...prev, photo: '' }));
+      await updateProfile({ photo: '' });
+      setPhotoStatus('Photo removed');
+      setTimeout(() => setPhotoStatus(''), 2000);
+    } catch (err) {
+      console.error("Photo remove error:", err);
+    } finally {
+      setIsUploadingPhoto(false);
+    }
   };
 
   const handleSave = async (e) => {
@@ -105,9 +211,53 @@ export default function ProfileDrawer() {
         <div className="cart-items profile-content">
           <div className={`tab-pane ${activeTab === 'details' ? 'active' : ''}`}>
             <div className="profile-avatar-wrapper">
-              <img id="profile-avatar-img" src={formData.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>"} alt="Avatar" />
-              <label htmlFor="photo-upload" className="photo-upload-label">✎ Edit Photo</label>
-              <input type="file" id="photo-upload" accept="image/*" hidden onChange={handlePhotoUpload} />
+              <div className="avatar-preview-container">
+                <img 
+                  id="profile-avatar-img" 
+                  src={formData.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>"} 
+                  alt="Avatar" 
+                  style={{ opacity: isUploadingPhoto ? 0.6 : 1 }}
+                />
+                {isUploadingPhoto && (
+                  <div className="avatar-loading-overlay">
+                    <Loader2 className="spinner-icon" size={24} />
+                    <span>Uploading...</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="avatar-action-buttons">
+                <label htmlFor="photo-upload" className="photo-upload-label">
+                  <Camera size={14} />
+                  <span>{isUploadingPhoto ? 'Uploading...' : formData.photo ? 'Change Photo' : 'Upload Photo'}</span>
+                </label>
+                {formData.photo && !isUploadingPhoto && (
+                  <button 
+                    type="button" 
+                    onClick={handleRemovePhoto} 
+                    className="photo-remove-btn"
+                    title="Remove photo"
+                  >
+                    <Trash2 size={13} />
+                    <span>Remove</span>
+                  </button>
+                )}
+              </div>
+
+              <input 
+                type="file" 
+                id="photo-upload" 
+                accept="image/*" 
+                hidden 
+                disabled={isUploadingPhoto} 
+                onChange={handlePhotoUpload} 
+              />
+
+              {photoStatus && (
+                <div className={`avatar-status-pill ${photoStatus.toLowerCase().includes('failed') ? 'error' : 'success'}`}>
+                  {photoStatus}
+                </div>
+              )}
             </div>
 
             <form id="profile-form" onSubmit={handleSave}>

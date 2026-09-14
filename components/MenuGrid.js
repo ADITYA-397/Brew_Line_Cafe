@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { collection, onSnapshot } from 'firebase/firestore';
@@ -121,6 +122,7 @@ const VintageMenuItem = ({ item, addToCart: propAddToCart }) => {
 };
 
 export default function MenuGrid() {
+  const router = useRouter();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -214,17 +216,11 @@ export default function MenuGrid() {
         {/* === PREMIUM VIEW FULL MENU BUTTON === */}
         <div className="text-center" style={{ marginTop: "72px" }}>
           <button 
-            onClick={() => {
-              setIsExpanded(!isExpanded);
-              if (isExpanded) {
-                const el = document.getElementById('menu');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
+            onClick={() => router.push('/menu')}
             className="group relative inline-flex items-center gap-4 bg-[#C28751] text-[#3B2E28] rounded-tl-2xl rounded-br-2xl rounded-tr-sm rounded-bl-sm border-2 border-[#3B2E28] shadow-[4px_4px_0px_0px_rgba(59,46,40,1)] transition-all duration-300 hover:translate-x-[-1.5px] hover:translate-y-[-1.5px] hover:shadow-[5px_5px_0px_0px_rgba(59,46,40,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(59,46,40,1)]" style={{ padding: "16px 36px" }}
           >
             <span className="text-xs md:text-sm font-heading font-bold uppercase tracking-widest relative z-10">
-              {isExpanded ? "Back to Featured" : "View Full Menu"}
+              View Full Menu
             </span>
             <ArrowRight size={16} className="relative z-10" />
           </button>

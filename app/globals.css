@@ -743,31 +743,123 @@ ul {
 /* Avatar Upload styling */
 .profile-avatar-wrapper {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
     position: relative;
-    display: inline-block;
-    left: 50%;
-    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-#profile-avatar-img {
+
+.avatar-preview-container {
+    position: relative;
     width: 120px;
     height: 120px;
+    margin: 0 auto;
     border-radius: 50%;
-    object-fit: cover;
+    overflow: hidden;
     border: 3px solid var(--color-primary);
     box-shadow: var(--shadow-soft);
+    background: #f4ece1;
 }
-.photo-upload-label {
+
+#profile-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.2s ease;
+}
+
+.avatar-loading-overlay {
     position: absolute;
-    bottom: 0;
-    right: -10px;
+    inset: 0;
+    background: rgba(59, 46, 40, 0.75);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.spinner-icon {
+    animation: spin-avatar 1s linear infinite;
+}
+
+@keyframes spin-avatar {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.avatar-action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.photo-upload-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     background: var(--color-primary);
     color: white;
-    padding: 0.3rem 0.6rem;
+    padding: 0.35rem 0.85rem;
     border-radius: 20px;
     font-size: 0.8rem;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.photo-upload-label:hover {
+    transform: translateY(-1px);
+    background: #a96f42;
+}
+
+.photo-remove-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: transparent;
+    color: #a84848;
+    border: 1px solid #e0a3a3;
+    padding: 0.3rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.photo-remove-btn:hover {
+    background: #fdf2f2;
+    color: #902626;
+    border-color: #c77;
+}
+
+.avatar-status-pill {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.avatar-status-pill.success {
+    background: #e6f7ef;
+    color: #107e4a;
+}
+
+.avatar-status-pill.error {
+    background: #fdeeee;
+    color: #c92a2a;
 }
 
 /* Form Styles */
@@ -1177,3 +1269,33 @@ ul {
     50% { opacity: 0.5; }
     100% { opacity: 1; }
 }
+
+/* Custom Hide Scrollbar Utility */
+.scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}
+
+/* Custom Narrow Scrollbar for Menu Popup */
+.popup-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+.popup-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.popup-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.popup-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 4px;
+}
+.popup-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.38);
+}
+
+

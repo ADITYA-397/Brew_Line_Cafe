@@ -62,7 +62,15 @@ export default function Navbar() {
         <div className="nav-actions-right">
           <div className="nav-icons-group">
             <button className="nav-icon-outline" onClick={handleUserClick} aria-label="User Account">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              {profile?.photo ? (
+                <img 
+                  src={profile.photo} 
+                  alt={profile.name || "Profile"} 
+                  className="nav-avatar-img" 
+                />
+              ) : (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              )}
             </button>
             <div className="nav-icon-separator"></div>
             <button className="nav-icon-outline cart-icon-wrapper" onClick={toggleCart} aria-label="Shopping Cart">
