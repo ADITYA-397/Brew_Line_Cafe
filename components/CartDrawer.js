@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { calculateOrderTotals, DEFAULT_DELIVERY_FEE } from "../lib/pricing";
@@ -32,10 +32,40 @@ function CoffeeCup() {
 
 export default function CartDrawer() {
   const router = useRouter();
+  const pathname = usePathname();
   const { cartItems, isCartOpen, setIsCartOpen, clearCart, updateQuantity } = useCart();
   const { user } = useAuth();
+  const [isNavigating, setIsNavigating] = useState(false);
 
-  React.useEffect(() => {
+  // Prefetch checkout page whenever cart is opened so navigation is instantaneous
+  useEffect(() => {
+    if (isCartOpen) {
+      try {
+        router.prefetch("/checkout");
+      } catch (e) {}
+    }
+  }, [isCartOpen, router]);
+
+  // Keep cart open during navigation so home/menu page never flashes; close once target route arrives
+  useEffect(() => {
+    if (pathname === "/checkout" || pathname.startsWith("/login")) {
+      setIsCartOpen(false);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsNavigating(false);
+    }
+  }, [pathname, setIsCartOpen]);
+
+  // Safety fallback in case navigation is delayed or cancelled
+  useEffect(() => {
+    if (isNavigating) {
+      const timer = setTimeout(() => {
+        setIsNavigating(false);
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [isNavigating]);
+
+  useEffect(() => {
     if (isCartOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
     return () => { document.body.style.overflow = ""; };
@@ -44,7 +74,9 @@ export default function CartDrawer() {
   const { subtotal, taxes, deliveryFee, total } = calculateOrderTotals(cartItems, DEFAULT_DELIVERY_FEE);
 
   const handleCheckoutClick = () => {
-    setIsCartOpen(false);
+    if (isNavigating) return;
+    setIsNavigating(true);
+
     if (!user) {
       router.push("/login?redirect=/checkout");
       return;
@@ -530,25 +562,48 @@ export default function CartDrawer() {
                   {/* Proceed to Checkout Button */}
                   <button
                     onClick={handleCheckoutClick}
+                    disabled={isNavigating}
                     style={{
                       width: "100%",
-                      backgroundColor: "#C08552",
+                      backgroundColor: isNavigating ? "#A96F3F" : "#C08552",
                       color: "#FFFFFF",
                       border: "none",
                       borderRadius: "9999px",
                       padding: "14px 20px",
                       fontSize: "15px",
                       fontWeight: 600,
-                      cursor: "pointer",
-                      display: "block",
+                      cursor: isNavigating ? "wait" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "10px",
                       boxSizing: "border-box",
                       boxShadow: "0 2px 8px rgba(192, 133, 82, 0.25)",
-                      transition: "background-color 0.2s, transform 0.1s",
+                      opacity: isNavigating ? 0.9 : 1,
+                      transition: "all 0.2s",
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = "#A96F3F"; }}
-                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = "#C08552"; }}
+                    onMouseEnter={e => { if (!isNavigating) e.currentTarget.style.backgroundColor = "#A96F3F"; }}
+                    onMouseLeave={e => { if (!isNavigating) e.currentTarget.style.backgroundColor = "#C08552"; }}
                   >
-                    Proceed to Checkout
+                    {isNavigating ? (
+                      <>
+                        <svg
+                          className="animate-spin"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        >
+                          <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                          <path d="M12 2a10 10 0 0 1 10 10" />
+                        </svg>
+                        <span>Loading Checkout...</span>
+                      </>
+                    ) : (
+                      "Proceed to Checkout"
+                    )}
                   </button>
                 </div>
               </div>

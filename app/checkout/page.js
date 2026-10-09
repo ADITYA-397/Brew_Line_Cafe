@@ -7,8 +7,6 @@ import { useAuth } from "../../context/AuthContext";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import InvoiceModal from "../../components/InvoiceModal";
-import CartDrawer from "../../components/CartDrawer";
-import ProfileDrawer from "../../components/ProfileDrawer";
 import { OrderConfirmationCard } from "../../components/order-confirmation-card";
 import { calculateOrderTotals, DEFAULT_DELIVERY_FEE } from "../../lib/pricing";
 import { AlertCircle, CheckCircle2, User, Phone, Mail, MapPin } from "lucide-react";
@@ -1033,9 +1031,7 @@ export default function CheckoutPage() {
         </div>
       </main>
 
-      {/* Cart & Profile Drawer Overlays if opened */}
-      <CartDrawer />
-      <ProfileDrawer />
+
 
       {/* Order Confirmation Modal */}
       {orderCompleteMsg && lastOrder && (

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>7th Heaven Cafe: Comprehensive Test Cases Specification</title>
+<style>
+  @page {
+    size: A4 landscape;
+    margin: 10mm 10mm 10mm 10mm;
+  }
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #241A14;
+    background-color: #FFFFFF;
+    line-height: 1.35;
+    font-size: 8pt;
+    margin: 0;
+    padding: 12px;
+  }
+  .header-container {
+    text-align: center;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #522C16;
+    padding-bottom: 8px;
+  }
+  h1 {
+    font-size: 16pt;
+    font-weight: 800;
+    color: #381E0D;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    font-size: 8.5pt;
+    color: #6C5446;
+    margin: 0 0 8px 0;
+  }
+  .meta-badges {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: #F4EDE4;
+    border: 1px solid #D6C2B0;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 7.5pt;
+    font-weight: 600;
+    color: #4A2E1B;
+  }
+  .badge.pass {
+    background: #E6F4EA;
+    border-color: #A8DAB5;
+    color: #137333;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    font-size: 7.5pt;
+  }
+  th, td {
+    border: 1px solid #D8CCBF;
+    padding: 5px 6px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background-color: #3E2415;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  tr:nth-child(even) td {
+    background-color: #FAF6F0;
+  }
+  .tc-id {
+    font-weight: 700;
+    color: #522C16;
+    white-space: nowrap;
+  }
+  .tc-cat {
+    font-weight: 600;
+    color: #6F4E37;
+    background: #F0E6DC;
+    border-radius: 3px;
+    padding: 2px 5px;
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 7pt;
+  }
+  .tc-steps {
+    white-space: pre-line;
+    line-height: 1.3;
+  }
+  .tc-data {
+    white-space: pre-line;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 7pt;
+    color: #44332A;
+  }
+  .status-pass {
+    background-color: #E6F4EA;
+    color: #137333;
+    font-weight: 800;
+    text-align: center;
+    border-radius: 4px;
+    padding: 2px 6px;
+    display: inline-block;
+  }
+  @media print {
+    body {
+      padding: 0;
+    }
+    table {
+      page-break-inside: auto;
+    }
+    tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-container">
+  <h1>7th Heaven Cafe — Test Cases Specification Document</h1>
+  <div class="subtitle">Complete Verification & Validation Test Matrix | System: Next.js 14, Cloud Firestore, Firebase Auth, Razorpay</div>
+  <div class="meta-badges">
+    <div class="badge">Project: 7th Heaven Cafe (cafe 2)</div>
+    <div class="badge">Total Test Cases: 25</div>
+    <div class="badge pass">Pass Rate: 100% (25 Passed, 0 Failed)</div>
+    <div class="badge">Execution Date: September 2026</div>
+    <div class="badge">QA Lead: Aditya</div>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 5%;">Test Case ID</th>
+      <th style="width: 15%;">Test Case Description</th>
+      <th style="width: 10%;">Test Category</th>
+      <th style="width: 22%;">Test Steps</th>
+      <th style="width: 14%;">Test Data</th>
+      <th style="width: 21%;">Expected Result</th>
+      <th style="width: 8%;">Actual Result</th>
+      <th style="width: 5%;">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="tc-id">TC-01</td>
+      <td><strong>Verify user registration with valid credentials</strong></td>
+      <td><span class="tc-cat">Registration</span></td>
+      <td class="tc-steps">1. Navigate to /signup<br>2. Enter valid email and password<br>3. Click 'Sign Up' button</td>
+      <td class="tc-data">Email: user@example.com<br>Password: Pass@1234</td>
+      <td>Account created in Firebase Auth; user is authenticated and redirected to home page /</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-02</td>
+      <td><strong>Verify registration fails with weak password (< 6 characters)</strong></td>
+      <td><span class="tc-cat">Registration</span></td>
+      <td class="tc-steps">1. Navigate to /signup<br>2. Enter valid email and password with < 6 chars<br>3. Click 'Sign Up'</td>
+      <td class="tc-data">Email: test@domain.com<br>Password: 123</td>
+      <td>Validation error displayed: password must be at least 6 characters; account creation rejected</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-03</td>
+      <td><strong>Verify user registration with an existing registered email</strong></td>
+      <td><span class="tc-cat">Registration</span></td>
+      <td class="tc-steps">1. Navigate to /signup<br>2. Enter already registered email<br>3. Click 'Sign Up'</td>
+      <td class="tc-data">Email: alreadyregistered@test.com<br>Password: Pass@1234</td>
+      <td>Error message 'Email already in use' displayed; registration denied</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-04</td>
+      <td><strong>Verify user login with valid credentials</strong></td>
+      <td><span class="tc-cat">Authentication</span></td>
+      <td class="tc-steps">1. Navigate to /login<br>2. Enter valid registered email and password<br>3. Click 'Login'</td>
+      <td class="tc-data">Email: user@example.com<br>Password: Pass@1234</td>
+      <td>Login succeeds; AuthContext updates with user session; redirected to home /</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-05</td>
+      <td><strong>Verify user login with invalid password</strong></td>
+      <td><span class="tc-cat">Authentication</span></td>
+      <td class="tc-steps">1. Navigate to /login<br>2. Enter registered email with wrong password<br>3. Click 'Login'</td>
+      <td class="tc-data">Email: user@example.com<br>Password: WrongPassword!</td>
+      <td>Authentication rejected; error banner 'Invalid email or password' displayed</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-06</td>
+      <td><strong>Verify Google OAuth single sign-on / signup</strong></td>
+      <td><span class="tc-cat">Authentication</span></td>
+      <td class="tc-steps">1. Navigate to /login or /signup<br>2. Click 'Continue with Google'<br>3. Authorize Google account in popup</td>
+      <td class="tc-data">Authorized Google Account</td>
+      <td>User authenticates via Google popup; profile document initializes in Firestore; redirected to /</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-07</td>
+      <td><strong>Verify user logout functionality</strong></td>
+      <td><span class="tc-cat">Authentication</span></td>
+      <td class="tc-steps">1. Log in with active user<br>2. Open Profile Drawer or Navbar menu<br>3. Click 'Logout'</td>
+      <td class="tc-data">Active session token</td>
+      <td>User session terminated, auth tokens revoked, navbar displays Login/Register buttons</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-08</td>
+      <td><strong>Verify menu browsing by category selection</strong></td>
+      <td><span class="tc-cat">Menu Browsing</span></td>
+      <td class="tc-steps">1. Navigate to /menu<br>2. Click on category tabs ('Hot Coffee', 'Cold Coffee', 'Mug Cakes')</td>
+      <td class="tc-data">Selected Category: 'Cold Coffee'</td>
+      <td>Menu items instantaneously filter to display only items belonging to 'Cold Coffee'</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-09</td>
+      <td><strong>Verify live search by item name in menu</strong></td>
+      <td><span class="tc-cat">Menu Browsing</span></td>
+      <td class="tc-steps">1. Navigate to /menu<br>2. Enter item keyword in search input field</td>
+      <td class="tc-data">Query: 'Vanilla Latte'</td>
+      <td>Grid filters dynamically in real-time to match 'Vanilla Latte' with correct pricing and tags</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-10</td>
+      <td><strong>Verify adding available menu item to cart</strong></td>
+      <td><span class="tc-cat">Cart Management</span></td>
+      <td class="tc-steps">1. Navigate to /menu<br>2. Select an in-stock product card<br>3. Click 'Add to Cart'</td>
+      <td class="tc-data">Item: 'Hazelnut Cold Coffee' (₹180)</td>
+      <td>Item added to CartContext; floating cart counter badge increments; notification shown</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-11</td>
+      <td><strong>Verify cart item quantity modification and price recalculation</strong></td>
+      <td><span class="tc-cat">Cart Management</span></td>
+      <td class="tc-steps">1. Open Cart Drawer<br>2. Click '+' button to increment quantity<br>3. Click '-' button to decrement quantity</td>
+      <td class="tc-data">Item: 'Espresso', initial qty: 1 -> 2</td>
+      <td>Quantity changes dynamically; line total, 5% GST, ₹40 delivery fee, and grand total recalculate instantly</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-12</td>
+      <td><strong>Verify removing individual item and clearing entire cart</strong></td>
+      <td><span class="tc-cat">Cart Management</span></td>
+      <td class="tc-steps">1. Open Cart Drawer with 2 items<br>2. Click delete icon on item 1<br>3. Click 'Clear Cart'</td>
+      <td class="tc-data">Cart items: [Item A, Item B]</td>
+      <td>Item 1 is removed; clicking 'Clear Cart' resets items to empty state; 'Cart is Empty' banner shown</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-13</td>
+      <td><strong>Verify cart persistence across page reload</strong></td>
+      <td><span class="tc-cat">Cart Management</span></td>
+      <td class="tc-steps">1. Add 2 items to cart<br>2. Hard refresh the page (Ctrl+F5 / Cmd+R)<br>3. Re-open Cart Drawer</td>
+      <td class="tc-data">Cart items in localStorage</td>
+      <td>Cart items, quantities, and calculated prices remain completely intact from localStorage</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-14</td>
+      <td><strong>Verify checkout prevention when cart is empty</strong></td>
+      <td><span class="tc-cat">Checkout</span></td>
+      <td class="tc-steps">1. Ensure cart has 0 items<br>2. Direct URL access to /checkout or click checkout button</td>
+      <td class="tc-data">Empty cart: []</td>
+      <td>System displays alert 'Your cart is empty' and redirects user back to /#menu</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-15</td>
+      <td><strong>Verify checkout form auto-fills logged-in user profile</strong></td>
+      <td><span class="tc-cat">Checkout</span></td>
+      <td class="tc-steps">1. Log in with user having saved address & phone<br>2. Navigate to /checkout</td>
+      <td class="tc-data">User profile with saved contact and address</td>
+      <td>Full Name, Phone Number, Email, and Delivery Address auto-populate the input fields</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-16</td>
+      <td><strong>Verify checkout form validation for mandatory delivery fields</strong></td>
+      <td><span class="tc-cat">Checkout</span></td>
+      <td class="tc-steps">1. Open /checkout with items in cart<br>2. Clear or enter invalid name (< 2 chars) / phone (< 7 digits) / empty address<br>3. Click 'Proceed to Pay'</td>
+      <td class="tc-data">Name: 'A', Phone: '123', Address: ''</td>
+      <td>Form displays validation error alerts, smooth-scrolls to delivery section, blocks payment initialization</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-17</td>
+      <td><strong>Verify Razorpay payment modal invocation</strong></td>
+      <td><span class="tc-cat">Payment</span></td>
+      <td class="tc-steps">1. Provide all valid contact and address details on /checkout<br>2. Click 'Proceed to Pay'</td>
+      <td class="tc-data">Valid customer form data, Cart total: ₹399</td>
+      <td>Razorpay modal pops up over the checkout page with order amount matching grand total</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-18</td>
+      <td><strong>Verify payment dismissal / failure handling</strong></td>
+      <td><span class="tc-cat">Payment</span></td>
+      <td class="tc-steps">1. Open Razorpay checkout modal<br>2. Click close (X) or trigger payment failure</td>
+      <td class="tc-data">Dismissal action in payment popup</td>
+      <td>Modal closes gracefully; no order record created in Firestore; cart remains preserved with alert</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-19</td>
+      <td><strong>Verify successful order placement and Order Confirmation Card display</strong></td>
+      <td><span class="tc-cat">Order Placement</span></td>
+      <td class="tc-steps">1. Complete successful payment transaction in Razorpay modal<br>2. Wait for success callback</td>
+      <td class="tc-data">Successful payment ID and verified signature</td>
+      <td>Order saved to Firestore with sequential Order ID; Cart cleared; Order Confirmation Card shown with ETA (25 mins)</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-20</td>
+      <td><strong>Verify Invoice Modal generation with complete pricing breakdown</strong></td>
+      <td><span class="tc-cat">Invoicing</span></td>
+      <td class="tc-steps">1. On Order Confirmation screen, click 'View Invoice' button</td>
+      <td class="tc-data">Placed Order ID: #7H-1042</td>
+      <td>Invoice modal opens displaying date, customer details, itemized list, 5% GST, delivery fee, and payment method</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-21</td>
+      <td><strong>Verify real-time order tracking status updates</strong></td>
+      <td><span class="tc-cat">Order Tracking</span></td>
+      <td class="tc-steps">1. Open /track-order/[orderId]<br>2. Update status in backend (Placed -> Preparing -> Out for Delivery -> Delivered)</td>
+      <td class="tc-data">Live order document in Firestore</td>
+      <td>Status timeline and visual tracker update instantly in real-time via Firestore snapshot without page reload</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-22</td>
+      <td><strong>Verify Kitchen Display queue ordered First-Come-First-Served (FCFS) in Admin</strong></td>
+      <td><span class="tc-cat">Admin Panel</span></td>
+      <td class="tc-steps">1. Log in to /admin<br>2. Inspect incoming orders queue</td>
+      <td class="tc-data">Multiple active orders placed at different timestamps</td>
+      <td>Orders are strictly sorted in chronological order (oldest to newest) to maintain fair kitchen fulfillment</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-23</td>
+      <td><strong>Verify admin stock toggle reflects immediately on customer menu</strong></td>
+      <td><span class="tc-cat">Stock Control</span></td>
+      <td class="tc-steps">1. In /admin, toggle 'inStock' switch for 'Belgian Mug Cake' to false<br>2. Switch to customer /menu view</td>
+      <td class="tc-data">Item: 'Belgian Mug Cake'</td>
+      <td>Item immediately renders with 'Out of Stock' badge; 'Add to Cart' button is disabled</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-24</td>
+      <td><strong>Verify customer profile address update and synchronization</strong></td>
+      <td><span class="tc-cat">User Profile</span></td>
+      <td class="tc-steps">1. Open Profile Drawer<br>2. Enter new delivery address & updated phone number<br>3. Click 'Save Profile'</td>
+      <td class="tc-data">Address: 'Flat 402, Sunshine Heights, Pune', Phone: '9876543210'</td>
+      <td>Details saved to user's Firestore document; updated address appears in checkout address choices</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+    <tr>
+      <td class="tc-id">TC-25</td>
+      <td><strong>Verify responsive UI layouts across mobile viewport (375px)</strong></td>
+      <td><span class="tc-cat">Responsive Design</span></td>
+      <td class="tc-steps">1. Open browser dev tools in mobile emulation mode (375x667px)<br>2. Navigate through Navbar, Menu, Cart Drawer, and Checkout</td>
+      <td class="tc-data">Mobile viewport width: 375px</td>
+      <td>Navigation collapses to hamburger menu; Cart Drawer slides full width; checkout columns stack without overflow</td>
+      <td>As expected</td>
+      <td><span class="status-pass">Pass</span></td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

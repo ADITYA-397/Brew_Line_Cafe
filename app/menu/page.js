@@ -5,8 +5,6 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
-import CartDrawer from "../../components/CartDrawer";
-import ProfileDrawer from "../../components/ProfileDrawer";
 import Footer from "../../components/Footer";
 import { Plus, Minus, ArrowUp, Check, ShoppingBag, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -709,8 +707,6 @@ export default function FullMenuPage() {
       </div>
 
       <Footer />
-      <CartDrawer />
-      <ProfileDrawer />
     </div>
   );
 }

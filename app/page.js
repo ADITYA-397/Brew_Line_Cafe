@@ -4,8 +4,6 @@ import About from '../components/About';
 import MenuGrid from '../components/MenuGrid';
 import LocationSection from '../components/LocationSection';
 import Footer from '../components/Footer';
-import CartDrawer from '../components/CartDrawer';
-import ProfileDrawer from '../components/ProfileDrawer';
 
 export default function Page() {
   return (
@@ -16,8 +14,6 @@ export default function Page() {
       <MenuGrid />
       <LocationSection />
       <Footer />
-      <CartDrawer />
-      <ProfileDrawer />
     </>
   );
 }
